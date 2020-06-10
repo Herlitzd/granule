@@ -1,0 +1,8 @@
+{
+  "branches": [
+    {
+      "branch": "/develop/",
+      "bump": "minor"
+    }
+  ]
+}
