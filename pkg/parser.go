@@ -3,7 +3,6 @@ package pkg
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 )
 
 // ParseConfig Load a configuration
@@ -11,7 +10,7 @@ func ParseConfig(path *string) (*ConfigDef, error) {
 	file, err := ioutil.ReadFile(*path)
 
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	var configDef ConfigDef

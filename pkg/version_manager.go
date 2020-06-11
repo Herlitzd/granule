@@ -8,8 +8,7 @@ import (
 
 // GetNextVersion Get the next version number
 func GetNextVersion(branchConfig *BranchConfig, lastVersion *semver.Version) string {
-	log.Print("branch")
-	log.Print(branchConfig)
+	log.Printf("Using branchConfig %v", branchConfig)
 	switch branchConfig.Bump {
 	case Major:
 		lastVersion.IncrementMajor()

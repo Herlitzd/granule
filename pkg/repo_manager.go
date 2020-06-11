@@ -1,8 +1,6 @@
 package pkg
 
 import (
-	"log"
-
 	"github.com/blang/semver/v4"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -30,7 +28,6 @@ func getVersions(tags []*plumbing.Reference) ([]semver.Version, error) {
 			return nil, err
 		}
 		versions = append(versions, ver)
-		log.Print(ver)
 	}
 
 	return versions, nil

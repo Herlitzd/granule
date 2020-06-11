@@ -3,6 +3,7 @@ package pkg
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"regexp"
 )
@@ -33,16 +34,23 @@ func (c ConfigDef) GetBranchConfig(branchName *string) (*BranchConfig, error) {
 	var matchedBranch *BranchConfig
 	for _, branch := range c.Branches {
 		matched, err := regexp.MatchString(branch.Branch, *branchName)
-		log.Printf(*branchName)
 		if err != nil {
 			return nil, err
 		}
+
+		if matched && matchedBranch != nil {
+			return nil, fmt.Errorf(
+				"multiple matching branch configurations found: %s and %s",
+				matchedBranch.Branch, branch.Branch)
+		}
+
 		if matched {
 			matchedBranch = &branch
 		}
 	}
+
 	if matchedBranch == nil {
-		return nil, errors.New("Branch not configured")
+		return nil, errors.New("branch configuration not found")
 	}
 	return matchedBranch, nil
 }
