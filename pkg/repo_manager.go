@@ -8,7 +8,7 @@ import (
 
 // RepoContext for storing repo handle
 type RepoContext struct {
-	repo *git.Repository
+	*git.Repository
 }
 
 //MakeRepoContext Initialize a repo
@@ -17,7 +17,7 @@ func MakeRepoContext(path string) (*RepoContext, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &RepoContext{repo: repo}, nil
+	return &RepoContext{repo}, nil
 }
 
 func getVersions(tags []*plumbing.Reference) ([]semver.Version, error) {
@@ -33,8 +33,8 @@ func getVersions(tags []*plumbing.Reference) ([]semver.Version, error) {
 	return versions, nil
 }
 
-func getTagsRefs(repo *git.Repository) ([]*plumbing.Reference, error) {
-	tagRefs, err := repo.Tags()
+func (context *RepoContext) getTagsRefs() ([]*plumbing.Reference, error) {
+	tagRefs, err := context.Tags()
 	var allTags []*plumbing.Reference
 
 	if err != nil {
@@ -50,9 +50,9 @@ func getTagsRefs(repo *git.Repository) ([]*plumbing.Reference, error) {
 }
 
 //GetLastTag Get the next version to tag
-func (context RepoContext) GetLastTag(path string) (*semver.Version, error) {
+func (context *RepoContext) GetLastTag(path string) (*semver.Version, error) {
 
-	tagRefs, err := getTagsRefs(context.repo)
+	tagRefs, err := context.getTagsRefs()
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (context RepoContext) GetLastTag(path string) (*semver.Version, error) {
 
 //GetCurrentBranch lint
 func (context RepoContext) GetCurrentBranch() (*string, error) {
-	head, err := context.repo.Head()
+	head, err := context.Head()
 	if err != nil {
 		return nil, err
 	}
