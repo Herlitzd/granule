@@ -8,17 +8,32 @@ import (
 	"github.com/go-git/go-git/v5/plumbing"
 )
 
-func getVersions(tags []*plumbing.Reference) []*semver.Version {
-	var versions []*semver.Version
+// RepoContext for storing repo handle
+type RepoContext struct {
+	repo *git.Repository
+}
+
+//MakeRepoContext Initialize a repo
+func MakeRepoContext(path string) (*RepoContext, error) {
+	repo, err := git.PlainOpen(path)
+	if err != nil {
+		return nil, err
+	}
+	return &RepoContext{repo: repo}, nil
+}
+
+func getVersions(tags []*plumbing.Reference) ([]semver.Version, error) {
+	var versions []semver.Version
 	for _, tag := range tags {
-		ver, err := semver.Make(tag.String())
+		ver, err := semver.ParseTolerant(tag.Name().Short())
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
-		versions = append(versions, &ver)
+		versions = append(versions, ver)
 		log.Print(ver)
 	}
-	return versions
+
+	return versions, nil
 }
 
 func getTagsRefs(repo *git.Repository) ([]*plumbing.Reference, error) {
@@ -37,23 +52,33 @@ func getTagsRefs(repo *git.Repository) ([]*plumbing.Reference, error) {
 	return allTags, nil
 }
 
-func getRepo() error {
-	repo, err := git.PlainOpen("/tmp/foo")
+//GetLastTag Get the next version to tag
+func (context RepoContext) GetLastTag(path string) (*semver.Version, error) {
+
+	tagRefs, err := getTagsRefs(context.repo)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	tagRefs, err := getTagsRefs(repo)
+	versions, err := getVersions(tagRefs)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	getVersions(tagRefs)
+	semver.Sort(versions)
+	lastVersion := versions[len(versions)-1]
 
-	return nil
+	return &lastVersion, nil
 }
 
-// func string GetNextVersion(){
+//GetCurrentBranch lint
+func (context RepoContext) GetCurrentBranch() (*string, error) {
+	head, err := context.repo.Head()
+	if err != nil {
+		return nil, err
+	}
 
-// 	return ""
-// }
+	branchName := head.Name().Short()
+
+	return &branchName, nil
+}

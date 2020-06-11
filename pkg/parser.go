@@ -7,7 +7,7 @@ import (
 )
 
 // ParseConfig Load a configuration
-func ParseConfig(path *string) *ConfigDef {
+func ParseConfig(path *string) (*ConfigDef, error) {
 	file, err := ioutil.ReadFile(*path)
 
 	if err != nil {
@@ -17,8 +17,8 @@ func ParseConfig(path *string) *ConfigDef {
 	var configDef ConfigDef
 	err = json.Unmarshal(file, &configDef)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	return &configDef
+	return &configDef, nil
 }

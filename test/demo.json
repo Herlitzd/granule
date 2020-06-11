@@ -1,8 +1,12 @@
 {
   "branches": [
     {
-      "branch": "/develop/",
+      "branch": "master",
       "bump": "minor"
+    },
+    {
+      "branch": "develop",
+      "bump": "patch"
     }
   ]
 }
