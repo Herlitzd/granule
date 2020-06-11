@@ -29,7 +29,7 @@ const (
 	Patch BumpLevel = "patch"
 )
 
-// GetBranchConfig lint
+// GetBranchConfig Find the branch config for a given branch
 func (c ConfigDef) GetBranchConfig(branchName *string) (*BranchConfig, error) {
 	var matchedBranch *BranchConfig
 	for _, branch := range c.Branches {
