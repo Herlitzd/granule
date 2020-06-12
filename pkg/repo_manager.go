@@ -68,7 +68,7 @@ func (context *RepoContext) GetLastTag(path string) (*semver.Version, error) {
 	return &lastVersion, nil
 }
 
-//GetCurrentBranch lint
+//GetCurrentBranch Get the name of the current branch
 func (context RepoContext) GetCurrentBranch() (*string, error) {
 	head, err := context.Head()
 	if err != nil {

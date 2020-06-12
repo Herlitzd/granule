@@ -2,11 +2,16 @@
   "branches": [
     {
       "branch": "master",
-      "bump": "minor"
+      "bump": "major"
+    },
+    {
+      "branch": "^feature/.$",
+      "isRegex": true,
+      "bump": "patch"
     },
     {
       "branch": "develop",
-      "bump": "patch"
+      "bump": "minor"
     }
   ]
 }

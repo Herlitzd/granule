@@ -15,8 +15,9 @@ type ConfigDef struct {
 
 // BranchConfig Rule for branches
 type BranchConfig struct {
-	Branch string    `json:"branch"`
-	Bump   BumpLevel `json:"bump"`
+	Branch        string    `json:"branch"`
+	BranchIsRegex bool      `json:"branchIsRegex"`
+	Bump          BumpLevel `json:"bump"`
 }
 
 // BumpLevel Enum for Version Levels
@@ -29,23 +30,45 @@ const (
 	Patch BumpLevel = "patch"
 )
 
-// GetBranchConfig Find the branch config for a given branch
-func (c ConfigDef) GetBranchConfig(branchName *string) (*BranchConfig, error) {
-	var matchedBranch *BranchConfig
-	for _, branch := range c.Branches {
-		matched, err := regexp.MatchString(branch.Branch, *branchName)
+func (branchConfig *BranchConfig) matchBranch(branchName *string) (*bool, error) {
+	if branchConfig.BranchIsRegex {
+		re, err := regexp.Compile(branchConfig.Branch)
+
 		if err != nil {
 			return nil, err
 		}
 
-		if matched && matchedBranch != nil {
+		matched := re.MatchString(*branchName)
+		return &matched, nil
+	}
+
+	matched := branchConfig.Branch == *branchName
+	return &matched, nil
+}
+
+// GetBranchConfig Find the branch config for a given branch
+func (c ConfigDef) GetBranchConfig(branchName *string) (*BranchConfig, error) {
+	var matchedBranch *BranchConfig
+	log.Printf("active branch: %s", *branchName)
+	for i, branch := range c.Branches {
+
+		matched, err := branch.matchBranch(branchName)
+
+		if err != nil {
+			return nil, err
+		}
+
+		log.Printf("trying pattern: %v, matched: %t", branch.Branch, *matched)
+
+		if *matched && matchedBranch != nil {
 			return nil, fmt.Errorf(
 				"multiple matching branch configurations found: %s and %s",
 				matchedBranch.Branch, branch.Branch)
 		}
 
-		if matched {
-			matchedBranch = &branch
+		if *matched {
+			log.Print("setting matched branch")
+			matchedBranch = &c.Branches[i]
 		}
 	}
 
