@@ -47,10 +47,9 @@ $ ./granule [flags] [config-file]
 ### Flags
 
 ```txt
-  -repo, -r string
-    	path to git repo root (default ".")
-  -verbose, -v
-    	enable verbose logging
+Usage of ./granule:
+  -h, --help          display this help message
+  -r, --repo string   path to git repo root (default ".")
+  -v, --verbose       enable verbose logging
+
 ```
-
-

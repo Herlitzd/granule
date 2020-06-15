@@ -1,23 +1,27 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 
 	"github.com/Herlitzd/granule/pkg"
+	flag "github.com/spf13/pflag"
 )
 
 var configPath = "granule.config.json"
-var repoPath = flag.String("repo", ".", "path to git repo root")
-var verbose = flag.Bool("verbose", false, "enable verbose logging")
+var repoPath = flag.StringP("repo", "r", ".", "path to git repo root")
+var verbose = flag.BoolP("verbose", "v", false, "enable verbose logging")
+var helpMessage = flag.BoolP("help", "h", false, "display this help message")
 
 func init() {
-	flag.StringVar(repoPath, "r", ".", "path to git repo root")
-	flag.BoolVar(verbose, "v", false, "enable verbose logging")
 	flag.Parse()
+
+	if *helpMessage {
+		flag.Usage()
+		os.Exit(0)
+	}
 
 	maybeConfigPath := flag.CommandLine.Arg(0)
 
@@ -36,6 +40,7 @@ func exit(err error) {
 
 func main() {
 	log.SetFlags(0)
+
 	if !(*verbose) {
 		log.SetOutput(ioutil.Discard)
 	}
