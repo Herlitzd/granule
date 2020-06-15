@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 )
 
@@ -10,7 +11,7 @@ func ParseConfig(path *string) (*ConfigDef, error) {
 	file, err := ioutil.ReadFile(*path)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("configuration file not found at '%s'\n%w", *path, err)
 	}
 
 	var configDef ConfigDef

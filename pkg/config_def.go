@@ -90,6 +90,6 @@ func (c ConfigDef) String() string {
 	return toJSON(c)
 }
 
-func (c BranchConfig) String() string {
-	return toJSON(c)
+func (branchConfig BranchConfig) String() string {
+	return toJSON(branchConfig)
 }
